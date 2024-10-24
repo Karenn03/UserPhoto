@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: DBCoffee
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/DBUserPhotos
+    username: postgres
+    password: "KM1013599968"
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+      #ddl-auto: none
+
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
+  main:
+    allow-circular-references: true
