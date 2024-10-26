@@ -12,7 +12,7 @@ public class UserDTO {
     private Long document;
     private String name ;
     private String lastname;
-    private byte[] photo;
+    private String photo;
     private LocalDate date_birth;
     private String blood_type;
     private String email;

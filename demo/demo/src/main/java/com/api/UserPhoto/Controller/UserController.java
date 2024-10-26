@@ -54,7 +54,7 @@ public class UserController {
             Map<String, Object> response = new HashMap<>();
             response.put("status", "success");
             response.put("message", "User Created Successfully");
-            response.put("code", 201);  // Cambio a código 201 Created
+            response.put("code", 201);
             return new ResponseEntity<>(response, HttpStatus.CREATED);
         } catch (CustomException e) {
             return handleException(e);

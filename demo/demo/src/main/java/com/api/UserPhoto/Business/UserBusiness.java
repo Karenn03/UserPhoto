@@ -4,16 +4,17 @@ import com.api.UserPhoto.DTO.UserDTO;
 import com.api.UserPhoto.Entity.UserEntity;
 import com.api.UserPhoto.Service.UserService;
 import com.api.UserPhoto.Utilities.CustomException;
-import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
 
 @Component
 public class UserBusiness {
@@ -58,7 +59,15 @@ public class UserBusiness {
             existingUser.setDocument(userDto.getDocument());
             existingUser.setName(userDto.getName());
             existingUser.setLastname(userDto.getLastname());
-            existingUser.setPhoto(userDto.getPhoto());
+            if (userDto.getPhoto() != null && !userDto.getPhoto().isEmpty()) {
+                byte[] photoBytes;
+                if (userDto.getPhoto().startsWith("http")) {
+                    photoBytes = downloadImageAsBytes(userDto.getPhoto());
+                } else {
+                    photoBytes = Base64.getDecoder().decode(userDto.getPhoto());
+                }
+                existingUser.setPhoto(photoBytes);
+            }
             existingUser.setDate_birth(userDto.getDate_birth());
             existingUser.setBlood_type(userDto.getBlood_type());
             existingUser.setEmail(userDto.getEmail());
@@ -81,6 +90,16 @@ public class UserBusiness {
                 throw new CustomException("La persona con el documento " + Document + " ya existe.");
             }
             UserEntity userEntity = modelMapper.map(userDto, UserEntity.class);
+            if (userDto.getPhoto() != null && !userDto.getPhoto().isEmpty()) {
+                byte[] photoBytes;
+                if (userDto.getPhoto().startsWith("http")) {
+                    photoBytes = downloadImageAsBytes(userDto.getPhoto());
+                } else {
+                    photoBytes = Base64.getDecoder().decode(userDto.getPhoto());
+                }
+                userEntity.setPhoto(photoBytes);
+            }
+
             userService.save(userEntity);
         } catch (Exception e){
             throw new CustomException("Error creando la persona.");
@@ -109,9 +128,17 @@ public class UserBusiness {
     public byte[] getPhoto(Long id) {
         UserEntity user = userService.getById(id);
         if (user.getPhoto() == null) {
-            throw new CustomException("La persona con id " + id + " no tiene una foto asociada.");
+            throw new CustomException("La persona con id " + id + " no tiene foto asociada.");
         }
         return user.getPhoto();
+    }
+
+    private byte[] downloadImageAsBytes(String imageUrl) {
+        try (InputStream in = new URL(imageUrl).openStream()) {
+            return in.readAllBytes();
+        } catch (Exception e) {
+            throw new CustomException("Error al descargar la imagen");
+        }
     }
 
 }

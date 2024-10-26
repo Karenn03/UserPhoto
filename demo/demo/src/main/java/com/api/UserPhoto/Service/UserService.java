@@ -6,9 +6,7 @@ import com.api.UserPhoto.Repository.UserRepository;
 import com.api.UserPhoto.Service.DAO.IDAO;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,28 +53,4 @@ public class UserService implements IDAO<UserEntity, Long> {
     public UserEntity findByDocument(Long document) {
         return userRepository.findByDocument(document);
     }
-/*
-    public UserEntity savePhoto(Long id, MultipartFile photoFile) throws IOException {
-        Optional<UserEntity> optionalUser = userRepository.findById(id);
-        if (optionalUser.isPresent()) {
-            UserEntity user = optionalUser.get();
-
-            byte[] photoBytes = photoFile.getBytes();
-            user.setPhoto(photoBytes);
-
-            return userRepository.save(user);
-        } else {
-            throw new EntityNotFoundException("Usuario no encontrado");
-        }
-    }
-
-    public byte[] getPhoto(Long id) {
-        Optional<UserEntity> optionalUser = userRepository.findById(id);
-        if (optionalUser.isPresent()) {
-            return optionalUser.get().getPhoto();
-        } else {
-            throw new EntityNotFoundException("Usuario no encontrado");
-        }
-    }
- */
 }
